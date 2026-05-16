@@ -1,0 +1,42 @@
+name: VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  vps:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+
+    steps:
+      - name: Install SSH
+        run: |
+          sudo apt update -y
+          sudo apt install -y openssh-server curl
+
+          sudo systemctl enable ssh
+          sudo systemctl start ssh
+
+          echo "root:admin@123" | sudo chpasswd
+
+          echo "PermitRootLogin yes" | sudo tee -a /etc/ssh/sshd_config
+
+          sudo service ssh restart
+
+      - name: Install Tailscale
+        run: |
+          curl -fsSL https://tailscale.com/install.sh | sh
+
+      - name: Start Tailscale
+        run: |
+          sudo tailscale up &
+
+          sleep 15
+
+          tailscale ip -4 || true
+
+      - name: Keep Alive
+        run: |
+          while true; do
+            sleep 300
+          done
