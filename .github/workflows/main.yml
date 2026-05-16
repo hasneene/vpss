@@ -1,0 +1,23 @@
+name: Ubuntu VPS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Update system
+        run: sudo apt update && sudo apt upgrade -y
+
+      - name: Install packages
+        run: |
+          sudo apt install -y curl wget unzip
+
+      - name: Keep VPS alive
+        run: |
+          echo "VPS Started"
+          while true; do
+            sleep 60
+          done
